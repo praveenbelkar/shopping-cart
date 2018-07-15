@@ -1,33 +1,36 @@
 package com.shoppingcart.service;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.*;
-
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import com.shoppingcart.domain.Product;
 import com.shoppingcart.domain.ShoppingCart;
-import com.shoppingcart.exception.InvalidAddItemException;
+import com.shoppingcart.exception.AddItemException;
 import com.shoppingcart.fixture.ProductTestDataFixture;
 import com.shoppingcart.fixture.ShoppingCartTestDataFixture;
-import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class ShoppingCartTest {
 
     private ShoppingCartService shoppingCartService;
+    private ProductService productService;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setUp() {
-        shoppingCartService = new ShoppingCartServiceImpl();
+        productService = new ProductServiceImpl();
+        shoppingCartService = new ShoppingCartServiceImpl(productService);
     }
 
     @Test
@@ -43,7 +46,7 @@ public class ShoppingCartTest {
         Product otherSoap = ProductTestDataFixture.getOtherSoap();
 
         //Act
-        shoppingCart = shoppingCartService.addItem(shoppingCart, doveSoap, 5L);
+        shoppingCart = shoppingCartService.addItem(shoppingCart, doveSoap.getId(), 5L);
 
         //Assert
         assertNotNull(shoppingCart);
@@ -63,12 +66,26 @@ public class ShoppingCartTest {
         //Arrange
         ShoppingCart shoppingCart = ShoppingCartTestDataFixture.getDefaultShoppingCart();
 
-        //Assert
-        thrown.expect(InvalidAddItemException.class);
+        //Expect
+        thrown.expect(AddItemException.class);
         thrown.expectMessage("No product is selected");
 
         //Act
         shoppingCart = shoppingCartService.addItem(shoppingCart, null, 0L);
+    }
+
+    @Test
+    public void addItem_given_emptyShoppingCart_when_invalidProductAdded_then_throwException() {
+        //Arrange
+        ShoppingCart shoppingCart = ShoppingCartTestDataFixture.getDefaultShoppingCart();
+        String invalidProductId = UUID.randomUUID().toString();
+
+        //Expect
+        thrown.expect(AddItemException.class);
+        thrown.expectMessage("Selected product does not exists");
+
+        //Act
+        shoppingCart = shoppingCartService.addItem(shoppingCart, invalidProductId, 2L);
 
     }
 
