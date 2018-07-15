@@ -16,7 +16,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public ShoppingCart addItem(ShoppingCart shoppingCart, String productId, Long quantity) {
+    public ShoppingCart addItem(String sessionId, String productId, Long quantity) {
         if(!validate(productId, quantity)) {
             throw new AddItemException("No product is selected");
         }
@@ -27,6 +27,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             throw new AddItemException("Selected product does not exists");
         }
 
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setSessionId(sessionId);
         shoppingCart.getItems().put(product, quantity);
         BigDecimal totalPrice  = product.getPrice().multiply(new BigDecimal(quantity));
         totalPrice = totalPrice.setScale(2, BigDecimal.ROUND_HALF_UP);
