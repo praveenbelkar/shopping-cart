@@ -86,6 +86,27 @@ public class ShoppingCartTest {
 
         //Act
         shoppingCart = shoppingCartService.addItem(shoppingCart, invalidProductId, 2L);
+    }
+
+    @Test
+    public void addItem_given_emptyShoppingCart_when_userAdds5DoveSoapFirstAndThen3DoveSoapsAgain_then_shoppingCartShouldContain8DoveSoapsWithTotalPriceUpdated() {
+        //Arrange
+        ShoppingCart shoppingCart = ShoppingCartTestDataFixture.getDefaultShoppingCart();
+        Product doveSoap = ProductTestDataFixture.getSingleDoveSoap();
+
+        //Act
+        shoppingCart = shoppingCartService.addItem(shoppingCart, doveSoap.getId(), 5L);
+        shoppingCart = shoppingCartService.addItem(shoppingCart, doveSoap.getId(), 3L);
+
+        //Assert
+        assertNotNull(shoppingCart);
+        assertNotNull(shoppingCart.getItems());
+        assertThat(shoppingCart.getItems().size(), Matchers.is(1));
+        assertTrue(shoppingCart.getItems().containsKey(doveSoap));
+        assertThat(shoppingCart.getItems().get(doveSoap), Matchers.is(8L));
+        BigDecimal expectedValue = new BigDecimal(319.92);
+        expectedValue = expectedValue.setScale(2, BigDecimal.ROUND_HALF_UP);
+        assertThat(shoppingCart.getTotalPrice(), is(expectedValue));
 
     }
 
