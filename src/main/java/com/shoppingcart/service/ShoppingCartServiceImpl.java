@@ -8,6 +8,7 @@ import com.shoppingcart.simulator.ShoppingCartRepository;
 import com.shoppingcart.simulator.ShoppingCartRepositoryImpl;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class ShoppingCartServiceImpl implements ShoppingCartService {
 
@@ -32,6 +33,12 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         }
 
         ShoppingCart shoppingCart = fetchExistingShoppingCartOrCreateNew(sessionId);
+        Long existingQuantityOfProductsInShoppingCart = shoppingCart.getItems().get(product);
+        if(existingQuantityOfProductsInShoppingCart == null) {
+            existingQuantityOfProductsInShoppingCart = 0L;
+        }
+        quantity = quantity + existingQuantityOfProductsInShoppingCart;
+
         shoppingCart.getItems().put(product, quantity);
         shoppingCart.setTotalPrice(calculateTotalPrice(product, quantity));
 
@@ -39,7 +46,21 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     private ShoppingCart fetchExistingShoppingCartOrCreateNew(String sessionId) {
+        if(null == sessionId || "".equals(sessionId.trim())) {
+            return createNewShoppingCart();
+        }
         ShoppingCart existingShoppingCart = shoppingCartRepository.getShoppingCart(sessionId);
+        if(null == existingShoppingCart) {
+            existingShoppingCart = createNewShoppingCart();
+        }
+        return existingShoppingCart;
+    }
+
+    private ShoppingCart createNewShoppingCart() {
+        ShoppingCart newShoppingCart = new ShoppingCart();
+        newShoppingCart.setSessionId(UUID.randomUUID().toString());
+        shoppingCartRepository.createShoppingCart(newShoppingCart);
+        return newShoppingCart;
     }
 
     private boolean validate(String productId, Long quantity) {
@@ -54,4 +75,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         totalPrice = totalPrice.setScale(2, BigDecimal.ROUND_HALF_UP);
         return totalPrice;
     }
+
+
 }

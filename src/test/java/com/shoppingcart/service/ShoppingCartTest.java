@@ -30,7 +30,7 @@ public class ShoppingCartTest {
     @Before
     public void setUp() {
         productService = new ProductServiceImpl();
-        shoppingCartService = new ShoppingCartServiceImpl(productService);
+        shoppingCartService = new ShoppingCartServiceImpl();
     }
 
     @Test
@@ -46,7 +46,7 @@ public class ShoppingCartTest {
         Product otherSoap = ProductTestDataFixture.getOtherSoap();
 
         //Act
-        shoppingCart = shoppingCartService.addItem(shoppingCart, doveSoap.getId(), 5L);
+        shoppingCart = shoppingCartService.addItem(shoppingCart.getSessionId(), doveSoap.getId(), 5L);
 
         //Assert
         assertNotNull(shoppingCart);
@@ -71,7 +71,7 @@ public class ShoppingCartTest {
         thrown.expectMessage("No product is selected");
 
         //Act
-        shoppingCart = shoppingCartService.addItem(shoppingCart, null, 0L);
+        shoppingCart = shoppingCartService.addItem(shoppingCart.getSessionId(), null, 0L);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class ShoppingCartTest {
         thrown.expectMessage("Selected product does not exists");
 
         //Act
-        shoppingCart = shoppingCartService.addItem(shoppingCart, invalidProductId, 2L);
+        shoppingCart = shoppingCartService.addItem(shoppingCart.getSessionId(), invalidProductId, 2L);
     }
 
     @Test
@@ -95,8 +95,8 @@ public class ShoppingCartTest {
         Product doveSoap = ProductTestDataFixture.getSingleDoveSoap();
 
         //Act
-        shoppingCart = shoppingCartService.addItem(shoppingCart, doveSoap.getId(), 5L);
-        shoppingCart = shoppingCartService.addItem(shoppingCart, doveSoap.getId(), 3L);
+        shoppingCart = shoppingCartService.addItem(shoppingCart.getSessionId(), doveSoap.getId(), 5L);
+        shoppingCart = shoppingCartService.addItem(shoppingCart.getSessionId(), doveSoap.getId(), 3L);
 
         //Assert
         assertNotNull(shoppingCart);
