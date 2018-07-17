@@ -1,5 +1,6 @@
 package com.shoppingcart.fixture;
 
+import com.shoppingcart.domain.ItemDetail;
 import com.shoppingcart.domain.Product;
 import com.shoppingcart.simulator.ProductRepositoryImpl;
 
@@ -16,6 +17,10 @@ public class ProductTestDataFixture {
     public static final String OTHER_SOAP_NAME = "Other Soap";
     public static final BigDecimal OTHER_SOAP_PRICE = new BigDecimal((20.00));
 
+    public static final String AXE_DEO_ID = ProductRepositoryImpl.AXE_DEO_ID;
+    public static final String AXE_DEO_NAME = "Axe Deo";
+    public static final BigDecimal AXE_DEO_PRICE = new BigDecimal(99.99);
+
     public static Product getSingleDoveSoap() {
         Product doveSoap = new Product();
         doveSoap.setId(DOVE_ID);
@@ -30,5 +35,19 @@ public class ProductTestDataFixture {
         otherSoap.setName(OTHER_SOAP_NAME);
         otherSoap.setPrice(OTHER_SOAP_PRICE);
         return otherSoap;
+    }
+
+    public static Product getAxeDeo() {
+        Product axeDeo = new Product();
+        axeDeo.setId(AXE_DEO_ID);
+        axeDeo.setName(AXE_DEO_NAME);
+        axeDeo.setPrice(AXE_DEO_PRICE);
+        return axeDeo;
+    }
+
+    public static ItemDetail getDoveItemDetail() {
+        ItemDetail doveItemDetail = new ItemDetail();
+        doveItemDetail.setProduct(getSingleDoveSoap());
+        return doveItemDetail;
     }
 }

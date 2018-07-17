@@ -17,19 +17,25 @@ public class ProductRepositoryImpl implements ProductRepository {
     public static final String DOVE_SOAP_NAME = "Dove";
     public static final BigDecimal DOVE_PRICE = new BigDecimal(39.99);
 
+    public static final String AXE_DEO_ID = UUID.randomUUID().toString();
+    public static final String AXE_DEO_NAME = "Axe Deo";
+    public static final BigDecimal AXE_DEO_PRICE = new BigDecimal(99.99);
+
     public static Map<String, Product> products = new HashMap<>();
     static {
-        Product doveSoap = getSingleDoveSoap();
+        Product doveSoap = createProduct(DOVE_ID, DOVE_SOAP_NAME, DOVE_PRICE);
         products.put(doveSoap.getId(), doveSoap);
+
+        Product axeDeo = createProduct(AXE_DEO_ID, AXE_DEO_NAME, AXE_DEO_PRICE);
+        products.put(axeDeo.getId(), axeDeo);
     }
 
-
-    public static Product getSingleDoveSoap() {
-        Product doveSoap = new Product();
-        doveSoap.setId(DOVE_ID);
-        doveSoap.setName(DOVE_SOAP_NAME);
-        doveSoap.setPrice(DOVE_PRICE);
-        return doveSoap;
+    public static Product createProduct(String id, String name, BigDecimal price) {
+        Product product = new Product();
+        product.setId(id);
+        product.setName(name);
+        product.setPrice(price);
+        return product;
     }
 
     @Override

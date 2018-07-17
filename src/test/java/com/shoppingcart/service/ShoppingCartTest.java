@@ -53,8 +53,8 @@ public class ShoppingCartTest {
         assertNotNull(shoppingCart.getItems());
         assertThat(shoppingCart.getItems().size(), Matchers.is(1));
         assertTrue(shoppingCart.getItems().containsKey(doveSoap));
-        assertThat(shoppingCart.getItems().get(doveSoap), Matchers.is(5L));
-        BigDecimal expectedValue = new BigDecimal(199.95);
+        assertThat(shoppingCart.getItems().get(doveSoap).getQuantity(), Matchers.is(5L));
+        BigDecimal expectedValue = new BigDecimal(224.94);
         expectedValue = expectedValue.setScale(2, BigDecimal.ROUND_HALF_UP);
         assertThat(shoppingCart.getTotalPrice(), is(expectedValue));
 
@@ -103,11 +103,32 @@ public class ShoppingCartTest {
         assertNotNull(shoppingCart.getItems());
         assertThat(shoppingCart.getItems().size(), Matchers.is(1));
         assertTrue(shoppingCart.getItems().containsKey(doveSoap));
-        assertThat(shoppingCart.getItems().get(doveSoap), Matchers.is(8L));
-        BigDecimal expectedValue = new BigDecimal(319.92);
+        assertThat(shoppingCart.getItems().get(doveSoap).getQuantity(), Matchers.is(8L));
+        BigDecimal expectedValue = new BigDecimal(359.91);
         expectedValue = expectedValue.setScale(2, BigDecimal.ROUND_HALF_UP);
         assertThat(shoppingCart.getTotalPrice(), is(expectedValue));
 
+    }
+
+    @Test
+    public void addItem_given_emptyShoppingCartAndTaxRate_when_userAddsTwoProducts_then_shoppingCartTotalPriceShouldReflectTaxRate() {
+        //Arrange
+        ShoppingCart shoppingCart = ShoppingCartTestDataFixture.getDefaultShoppingCart();
+        Product doveSoap = ProductTestDataFixture.getSingleDoveSoap();
+        Product axeDeo = ProductTestDataFixture.getAxeDeo();
+
+        //Act
+        shoppingCart = shoppingCartService.addItem(shoppingCart.getSessionId(), doveSoap.getId(), 2L);
+        shoppingCart = shoppingCartService.addItem(shoppingCart.getSessionId(), axeDeo.getId(), 2L);
+
+        //Assert
+        BigDecimal expectedTotalPrice = new BigDecimal(314.96);
+        expectedTotalPrice = expectedTotalPrice.setScale(2, BigDecimal.ROUND_HALF_UP);
+        assertThat(shoppingCart.getTotalPrice(), is(expectedTotalPrice));
+
+        BigDecimal expectedTotalTax = new BigDecimal(35.00);
+        expectedTotalTax = expectedTotalTax.setScale(2, BigDecimal.ROUND_HALF_UP);
+        assertThat(shoppingCart.getTotalTax(), is(expectedTotalTax));
     }
 
 }
